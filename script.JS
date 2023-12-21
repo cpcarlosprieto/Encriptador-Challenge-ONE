@@ -1,36 +1,89 @@
-function encriptar(){
-    var texto = document.getElementById("inputTexto").value.toLowerCase();
-    var txtCifrado = texto.replace(/e/igm, "enter");
-    var txtCifrado = txtCifrado.replace(/o/igm, "ober");
-    var txtCifrado = txtCifrado.replace(/i/igm, "imes");
-    var txtCifrado = txtCifrado.replace(/a/igm, "ai");
-    var txtCifrado = txtCifrado.replace(/u/igm, "ufat");
-
-    //document.getElementById("imagDer").style.display = "none";
-    document.getElementById("texto1").style.display = "none";
-    document.getElementById("texto2").innerHTML = txtCifrado;
-    document.getElementById("copy").style.display = "show";
-    document.getElementById("copy").style.display = "inherit"; 
+function mostrar(mensaje) {
+  document.querySelector("#resultado").innerHTML = mensaje;
 }
 
-function desencriptar(){
-    var texto = document.getElementById("inputTexto").value.toLowerCase();
-    var txtCifrado = texto.replace(/enter/igm, "e");
-    var txtCifrado = txtCifrado.replace(/ober/igm, "o");
-    var txtCifrado = txtCifrado.replace(/imes/igm, "i");
-    var txtCifrado = txtCifrado.replace(/ai/igm, "a");
-    var txtCifrado = txtCifrado.replace(/ufat/igm, "u");
-
-    //document.getElementById("imagDer").style.display = "none";
-    document.getElementById("texto1").style.display = "none";
-    document.getElementById("texto2").innerHTML = txtCifrado;
-    document.getElementById("copy").style.display = "show";
-    document.getElementById("copy").style.display = "inherit"; 
+function actualizarPantalla() {
+  document.querySelector("#vacio").style.display = "none";
+  document.querySelector("#imagenSinMensaje").style.display = "none";
+  document.querySelector("#sinMensaje").style.display = "none";
+  document.querySelector("#descpripcionSinMensaje").style.display = "none";
+  document.querySelector("#resultado").style.display = "inline-block";
+  document.querySelector("#copiar").style.display = "inline-block";
 }
 
-function copiar(){
-    var contenido = document.querySelector("#texto2");
-    contenido.select();
-    document.execCommand("copy");
-    alert("Texto copiado!!!")
+function encriptarMensaje() {
+  var mensaje = document.querySelector("#texto").value;
+  var secreto = "";
+
+  if (
+    mensaje != "" &&
+    !/[A-Z]/g.test(mensaje) &&
+    !/[á-ú]/g.test(mensaje) &&
+    mensaje.trim().length
+  ) {
+    for (var i = 0; i < mensaje.length; i++) {
+      switch (mensaje[i]) {
+        case "a":
+          secreto += "ai";
+          break;
+        case "e":
+          secreto += "enter";
+          break;
+        case "i":
+          secreto += "imes";
+          break;
+        case "o":
+          secreto += "ober";
+          break;
+        case "u":
+          secreto += "ufat";
+          break;
+        default:
+          secreto += mensaje[i];
+      }
+    }
+
+    actualizarPantalla();
+    mostrar(secreto);
+    document.querySelector("#texto").value = "";
+  } else alert("No se aceptan mayusculas y acentos");
 }
+
+function desencriptarMensaje() {
+  var mensaje = document.querySelector("#texto").value;
+  var codigos = [/ai/g, /enter/g, /imes/g, /ober/g, /ufat/g];
+  var letras = ["a", "e", "i", "o", "u"];
+
+  if (
+    mensaje != "" &&
+    !/[A-Z]/g.test(mensaje) &&
+    !/[á-ú]/g.test(mensaje) &&
+    mensaje.trim().length
+  ) {
+    for (var i = 0; i < 5; i++) {
+      mensaje = mensaje.replaceAll(codigos[i], letras[i]);
+    }
+
+    actualizarPantalla();
+    mostrar(mensaje);
+    document.querySelector("#texto").value = "";
+  } else alert("No se aceptan mayusculas y acentos");
+}
+
+function copiarTexto() {
+  var texto = document.querySelector("#resultado");
+  texto.select();
+  texto.setSelectionRange(0, 99999); /* For mobile devices */
+  navigator.clipboard.writeText(texto.value);
+}
+
+var encriptar = document.querySelector("#encriptar");
+var desencriptar = document.querySelector("#desencriptar");
+var copiar = document.querySelector("#copiar");
+document.querySelector(".astro").addEventListener("click", function () {
+  document.body.classList.toggle("darkTheme");
+});
+
+copiar.onclick = copiarTexto;
+encriptar.onclick = encriptarMensaje;
+desencriptar.onclick = desencriptarMensaje;
